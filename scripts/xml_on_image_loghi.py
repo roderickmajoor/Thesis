@@ -70,8 +70,9 @@ for text_region in root.findall('.//page:TextRegion', ns):
 #cv2.imshow('Loghi XML on Image', image)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
+cv2.imwrite("/home/roderickmajoor/Desktop/Master/Thesis/images/gt_loghi.jpg", image)
 # Display the image with GT layout in the notebook
-plt.figure(figsize=(10, 10))
-plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-plt.axis('off')
-plt.show()
+#plt.figure(figsize=(10, 10))
+#plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+#plt.axis('off')
+#plt.show()

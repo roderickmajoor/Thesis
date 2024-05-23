@@ -3,7 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 # Path to the ground truth (GT) XML file
-gt_path = '/home/roderickmajoor/Desktop/Master/Thesis/GT_data/55/page/WBMA00007000010.xml'
+gt_path = '/home/roderickmajoor/Desktop/Master/Thesis/GT_data/1045/page/EPTT00953000010.xml'
 
 # Load the GT XML file
 gt_tree = ET.parse(gt_path)
@@ -14,7 +14,7 @@ ns = {'page': 'http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15'}
 
 # Load the image corresponding to the GT
 image_filename = gt_root.find('.//page:Page', ns).attrib['imageFilename']
-image = cv2.imread('/home/roderickmajoor/Desktop/Master/Thesis/GT_data/55/' + image_filename)
+image = cv2.imread('/home/roderickmajoor/Desktop/Master/Thesis/GT_data/1045/' + image_filename)
 
 # Function to draw colored lines
 def draw_colored_lines(coordinates, color):
@@ -92,11 +92,12 @@ for table_region in gt_root.findall('.//page:TableRegion', ns):
             add_text_to_image(text_content, text_position)
 
 # Display the image with GT layout
-#cv2.namedWindow('Ground Truth Layout', cv2.WINDOW_NORMAL)
-#cv2.imshow('Ground Truth Layout', image)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
-plt.figure(figsize=(10, 10))
-plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-plt.axis('off')
-plt.show()
+cv2.namedWindow('Ground Truth Layout', cv2.WINDOW_NORMAL)
+cv2.imshow('Ground Truth Layout', image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+#cv2.imwrite("/home/roderickmajoor/Desktop/Master/Thesis/images/gt_xml.jpg", image)
+#plt.figure(figsize=(10, 10))
+#plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+#plt.axis('off')
+#plt.show()

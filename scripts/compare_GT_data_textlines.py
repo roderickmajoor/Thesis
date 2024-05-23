@@ -25,7 +25,7 @@ image = cv2.imread('/home/roderickmajoor/Desktop/Master/Thesis/GT_data/55/' + im
 def get_all_xml_files(root_directory):
     xml_files_by_subdir = {}
     for root, subdirs, files in os.walk(root_directory):
-        xml_files = [os.path.join(root, file) for file in files if file.endswith(".xml")]
+        xml_files = [os.path.join(root, file) for file in files if file.endswith(".xml") and not file.endswith("_columns_found.xml")]
         if xml_files:
             xml_files_by_subdir[root] = xml_files
     return xml_files_by_subdir
@@ -261,6 +261,14 @@ def one_image_data(root_gt, root_loghi):
 
     words_loghi = root_loghi.findall('.//page:Word', ns)
 
+    # Frequently occuring substituions made by htr system where number -> char
+    replacements = {
+        'a': '1', 'n': '7', 's': '8', 'r': '2', 'i': '1', 't': '1', 'o': '0', 'g': '9',
+        'e': '1', 'd': '1', 'ƒ': '1', 'p': '7', 'S': '8', 'k': '3', 'R': '7', 'u': '1',
+        'v': '1', 'l': '1', 'h': '2', 'f': '1', 'B': '3', 'b': '6', 'm': '9', 'w': '1',
+        'y': '9', 'c': '1', 'C': '1', 'I': '1', 'N': '1', 'E': '6', 'z': '3', 'q': '9'
+    }
+
     tot_insertions = 0
     tot_deletions = 0
     tot_substitutions = 0
@@ -292,12 +300,30 @@ def one_image_data(root_gt, root_loghi):
         for j, word_loghi in enumerate(words_loghi):
             coords_loghi = word_loghi.find('page:Coords', ns).attrib['points']
             text_loghi = word_loghi.find('page:TextEquiv/page:Unicode', ns).text
-            loghi_words_dict[j] = {'coords': coords_loghi, 'text': text_loghi}
+            #loghi_words_dict[j] = {'coords': coords_loghi, 'text': text_loghi}
 
-            iou = calculate_iou(coords_gt, coords_loghi)
-            if iou > best_iou:
-                best_iou = iou
-                matched_word_index = j
+            # Check if text contains letters or numbers
+            if any(c.isalnum() for c in text_loghi):
+                # Remove characters that are not letters or numbers
+                cleaned_text = ''.join(c for c in text_loghi if c.isalnum())
+
+                # Replace specific characters if the text contains both letters and numbers
+                if any(c.isdigit() for c in cleaned_text) and any(c.isalpha() for c in cleaned_text) or len(cleaned_text) == 1:
+                    for key, value in replacements.items():
+                        cleaned_text = cleaned_text.replace(key, value)
+
+                # Check if cleaned text is a single character and not a number
+                if len(cleaned_text) > 1 or cleaned_text.isdigit():
+                    loghi_words_dict[j] = {'coords': coords_loghi, 'text': cleaned_text}
+
+            #iou = calculate_iou(coords_gt, coords_loghi)
+            #if iou > best_iou:
+            #    best_iou = iou
+            #    matched_word_index = j
+                    iou = calculate_iou(coords_gt, coords_loghi)
+                    if iou > best_iou:
+                        best_iou = iou
+                        matched_word_index = j
 
         if best_iou > 0.0:
             gt_text = gt_regions_dict[i]['text']
