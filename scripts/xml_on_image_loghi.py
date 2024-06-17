@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 import cv2
 import matplotlib.pyplot as plt
 
-path = '/home/roderickmajoor/Desktop/Master/Thesis/loghi/data/55/page/WBMA00007000010.xml'
+path = '/home/roderickmajoor/Desktop/Master/Thesis/loghi/data/99/page/WBMB00008000060.xml'
 
 # Load the XML file
 tree = ET.parse(path)
@@ -17,7 +17,7 @@ image_width = int(root.find('page:Page', ns).attrib['imageWidth'])
 image_height = int(root.find('page:Page', ns).attrib['imageHeight'])
 
 # Load the image
-image = cv2.imread('/home/roderickmajoor/Desktop/Master/Thesis/loghi/data/55/' + image_filename)
+image = cv2.imread('/home/roderickmajoor/Desktop/Master/Thesis/loghi/data/99/' + image_filename)
 
 # Function to draw colored lines
 def draw_colored_lines(coordinates, color):
@@ -70,7 +70,7 @@ for text_region in root.findall('.//page:TextRegion', ns):
 #cv2.imshow('Loghi XML on Image', image)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
-cv2.imwrite("/home/roderickmajoor/Desktop/Master/Thesis/images/gt_loghi.jpg", image)
+cv2.imwrite("/home/roderickmajoor/Desktop/Master/Thesis/images/loghi_xml_2.jpg", image)
 # Display the image with GT layout in the notebook
 #plt.figure(figsize=(10, 10))
 #plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))

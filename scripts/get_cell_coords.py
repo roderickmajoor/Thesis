@@ -320,7 +320,7 @@ def find_middle(image):
     sorted_contours = sorted(contours, key=lambda c: cv2.boundingRect(c)[0])
 
     # Get the middle line
-    if len(sorted_contours) > 8:
+    if len(sorted_contours) > 10:
         middle_contour = sorted_contours[len(sorted_contours)//2]  # Contours are 0-indexed
         # Get the bounding box coordinates of the sixth contour
         x, _, w, _ = cv2.boundingRect(middle_contour)
@@ -364,8 +364,8 @@ def create_table(column_coords, row_coords, loghi_words_dict):
 
     # Split the DataFrame into two separate tables
     if df.shape[1] > 8:
-        table1 = df.iloc[:, :df.shape[1]//2]  # First six columns
-        table2 = df.iloc[:, df.shape[1]//2:]  # Last six columns
+        table1 = df.iloc[:, :df.shape[1]//2]  # First half columns
+        table2 = df.iloc[:, df.shape[1]//2:]  # Last half columns
 
         # Remove empty rows from each table
         table1 = remove_empty_rows(table1)
@@ -376,6 +376,20 @@ def create_table(column_coords, row_coords, loghi_words_dict):
         df = remove_empty_rows(df)
         return df
 
+def get_col(xml_loghi, image_path):
+    # Load the image
+    image = cv2.imread(image_path)
+    if image is None:
+        raise ValueError("Image not found at the specified path")
+
+    textlines, leftmost, rightmost = find_loghi_textlines(xml_loghi)
+    fg_image, foreground = foreground_extractor(image.copy())
+    vertical_lines = vertical_line_finder(image.copy(), foreground, (leftmost, rightmost))
+    columns = cv2.subtract(fg_image, vertical_lines)
+
+    column_coords, _ = cv2.findContours(columns, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    return column_coords
 
 def get_col_row(xml_loghi, image_path):
     #xml_loghi = '/home/roderickmajoor/Desktop/Master/Thesis/loghi/data/55/page/WBMA00007000010.xml'

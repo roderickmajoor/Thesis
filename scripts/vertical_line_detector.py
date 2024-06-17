@@ -247,8 +247,11 @@ def vertical_line_finder(image, foreground, edges):
     # Apply houglines again to find full lines
     result = np.zeros((height, width), dtype=np.uint8)
     contours, _ = cv2.findContours(black_and_white_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    for contour in contours:
-        result_image = draw_line_from_top_to_bottom(result, contour)
+    if contours:
+        for contour in contours:
+           result_image = draw_line_from_top_to_bottom(result, contour)
+    else:
+        result_image = result
 
     #lines = cv2.HoughLinesP(black_and_white_image, rho=1, theta=np.pi/180, threshold=100, minLineLength=10, maxLineGap=10)
 
